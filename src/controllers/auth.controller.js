@@ -168,13 +168,21 @@ export const logout = async (req, res) => {
 // CheckAuth controller
 export const checkAuth = async (req, res) => {
   try {
-    return res
-      .status(200)
-      .json({ success: false, message: "Authenticated", user: req.user });
+    // User is already authenticated (verified by protectedRoute middleware)
+    return res.status(200).json({ 
+      success: true,  // ← Changed from false to true
+      message: "Authenticated", 
+      user: req.user 
+    });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    console.error("❌ CheckAuth error:", error.message);
+    return res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
   }
 };
+
 
 // Verify email controller
 export const verifyEmail = async (req, res) => {
