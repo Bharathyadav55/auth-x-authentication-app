@@ -61,11 +61,14 @@ export const register = async (req, res) => {
 
     // Generate JWT
     const token = generateJwt(newUser._id);
+    
+    // ✅ UPDATED: Cookie settings for production
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",  // ← Changed for production
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      domain: isProduction ? ".onrender.com" : undefined,  // ← Added for production
     });
 
     // Send verification email
@@ -100,7 +103,6 @@ export const register = async (req, res) => {
   }
 };
 
-
 // Login controller
 export const login = async (req, res) => {
   try {
@@ -132,12 +134,13 @@ export const login = async (req, res) => {
 
     const token = generateJwt(user._id);
 
+    // ✅ Cookie already updated correctly in your code
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",  // ← Changed
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      domain: process.env.NODE_ENV === "production" ? ".onrender.com" : undefined,  // ← Added
+      domain: isProduction ? ".onrender.com" : undefined,
     });
 
     const resUser = await User.findOne({ email }).select("-password");
@@ -155,7 +158,8 @@ export const logout = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "None" : true,
+      sameSite: isProduction ? "none" : "lax",  // ← Fixed: was "None" (capital N)
+      domain: isProduction ? ".onrender.com" : undefined,  // ← Added
     });
     return res.status(200).json({
       success: true,
@@ -171,7 +175,7 @@ export const checkAuth = async (req, res) => {
   try {
     // User is already authenticated (verified by protectedRoute middleware)
     return res.status(200).json({ 
-      success: true,  // ← Changed from false to true
+      success: true,  // ✅ Already correct
       message: "Authenticated", 
       user: req.user 
     });
@@ -183,7 +187,6 @@ export const checkAuth = async (req, res) => {
     });
   }
 };
-
 
 // Verify email controller
 export const verifyEmail = async (req, res) => {
