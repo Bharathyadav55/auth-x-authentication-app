@@ -7,23 +7,22 @@ import {
 } from "./template.js";
 
 // Gmail SMTP Configuration
-const transporter = nodemailer.createTransport({
-  service: "gmail",
+export const transporter = nodemailer.createTransport({
+  service: 'gmail',
   auth: {
-    user: process.env.MAILTRAP_USER,
-    pass: process.env.MAILTRAP_PASS,
+    user: process.env.MAILTRAP_USER,  // your Gmail address
+    pass: process.env.MAILTRAP_PASS,  // your App Password
   },
 });
 
 // Test connection
 transporter.verify((error, success) => {
   if (error) {
-    console.error("❌ GMAIL CONNECTION ERROR:", error.message);
+    console.error('❌ Email configuration error:', error);
   } else {
-    console.log("✅ GMAIL CONNECTION SUCCESSFUL");
+    console.log('✅ GMAIL CONNECTION SUCCESSFUL');
   }
 });
-
 // Verification email
 export const sendVerificationEmail = async (email, verificationToken) => {
   try {
