@@ -19,9 +19,8 @@ console.log('MONGODB_URI exists?', !!process.env.MONGODB_URI);
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
-  'https://auth-x-frontend.onrender.com'  // ← CORRECT FRONTEND URL
+  'https://auth-x-frontend.onrender.com'
 ];
-
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -34,9 +33,10 @@ app.use(cors({
     }
     return callback(null, true);
   },
-  credentials: true,
+  credentials: true,  // ← VERY IMPORTANT
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],  // ← Added Cookie
+  exposedHeaders: ['Set-Cookie']  // ← Added
 }));
 
 app.use(express.json());
