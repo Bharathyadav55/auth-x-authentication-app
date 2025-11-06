@@ -19,8 +19,9 @@ console.log('MONGODB_URI exists?', !!process.env.MONGODB_URI);
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
-  'https://auth-x-authentication-frontend.onrender.com'  // ← ADD YOUR FRONTEND URL
+  'https://auth-x-frontend.onrender.com'  // ← CORRECT FRONTEND URL
 ];
+
 
 app.use(cors({
   origin: function (origin, callback) {
