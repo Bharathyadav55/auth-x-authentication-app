@@ -6,12 +6,11 @@ import {
   WELCOME_EMAIL_TEMPLATE,
 } from "./template.js";
 
-// Gmail SMTP Configuration with better settings
+// ✅ FIXED: Better Gmail SMTP Configuration
 export const transporter = nodemailer.createTransport({
-  service: 'gmail',
   host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // use TLS
+  port: 465,  // ← Changed from 587 to 465 for SSL
+  secure: true,  // ← Changed to true for SSL
   auth: {
     user: process.env.MAILTRAP_USER,
     pass: process.env.MAILTRAP_PASS,
@@ -19,16 +18,16 @@ export const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false
   },
-  connectionTimeout: 10000,
-  greetingTimeout: 5000,
-  socketTimeout: 10000,
+  debug: true,  // ← Enable debug logs
+  logger: true  // ← Enable logger
 });
 
-// Test connection with detailed logging
+// Test connection with better logging
 transporter.verify((error, success) => {
   if (error) {
     console.error('❌ GMAIL CONNECTION FAILED');
     console.error('Error details:', error.message);
+    console.error('Full error:', error);
     console.error('Make sure:');
     console.error('1. MAILTRAP_USER is set correctly');
     console.error('2. MAILTRAP_PASS is a valid Gmail App Password');
@@ -63,6 +62,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
     console.error("❌ Failed to send verification email");
     console.error("Error message:", error.message);
     console.error("Error code:", error.code);
+    console.error("Full error:", error);
     throw new Error(`Email sending failed: ${error.message}`);
   }
 };
