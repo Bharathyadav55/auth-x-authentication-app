@@ -24,14 +24,18 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    console.log('🌐 Request from origin:', origin);
+    
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      console.log('✅ Origin allowed:', origin);
+      return callback(null, true);
+    } else {
+      console.log('❌ Origin blocked:', origin);
+      const msg = 'CORS policy does not allow access from this origin.';
       return callback(new Error(msg), false);
     }
-    return callback(null, true);
   },
   credentials: true,  // ← VERY IMPORTANT
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
