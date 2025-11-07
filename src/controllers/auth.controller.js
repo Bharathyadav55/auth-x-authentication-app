@@ -62,13 +62,13 @@ export const register = async (req, res) => {
     // Generate JWT
     const token = generateJwt(newUser._id);
     
-    // ✅ UPDATED: Cookie settings for production
+    // ✅ FIXED: Removed domain property
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",  // ← Changed for production
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      domain: isProduction ? ".onrender.com" : undefined,  // ← Added for production
+      path: "/",
     });
 
     // Send verification email
@@ -134,13 +134,13 @@ export const login = async (req, res) => {
 
     const token = generateJwt(user._id);
 
-    // ✅ Cookie already updated correctly in your code
+    // ✅ FIXED: Removed domain property
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      domain: isProduction ? ".onrender.com" : undefined,
+      path: "/",
     });
 
     const resUser = await User.findOne({ email }).select("-password");
@@ -155,11 +155,12 @@ export const login = async (req, res) => {
 // Logout controller
 export const logout = async (req, res) => {
   try {
+    // ✅ FIXED: Removed domain property
     res.clearCookie("token", {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",  // ← Fixed: was "None" (capital N)
-      domain: isProduction ? ".onrender.com" : undefined,  // ← Added
+      sameSite: isProduction ? "none" : "lax",
+      path: "/",
     });
     return res.status(200).json({
       success: true,
@@ -175,7 +176,7 @@ export const checkAuth = async (req, res) => {
   try {
     // User is already authenticated (verified by protectedRoute middleware)
     return res.status(200).json({ 
-      success: true,  // ✅ Already correct
+      success: true,
       message: "Authenticated", 
       user: req.user 
     });
